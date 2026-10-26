@@ -56,7 +56,11 @@ void TitleScene::Initialize()
 	haikeiTransform.scale_ = { 0.6f,1.5f,1.0f };
 	haikeiTransform.rotation_ = { 0.0f,3.14f,0.0f };
 
-	
+	fade_ = new Fade();
+
+	fade_->Initialize(yenModel_,&camera_);
+
+
 
 	cameraPosition = { -5.0f,0.0f,-25.0f };
 
@@ -81,21 +85,47 @@ void TitleScene::Initialize()
 	roop = 0;
 	viewTimer = 0.0f;
 	isView = false;
+
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void TitleScene::Update()
 {
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE))
-	{
-		isFinish = true;
 
-		SEHandle = Audio::GetInstance()->PlayWave(SEDataHandle, true);
-
-		Audio::GetInstance()->StopWave(soundDataHandle);
+	switch (phase_) {
+	case Phase::kFadeIn:
 		
-	}
 
+		if (fade_->isFinished()) {
+			phase_ = Phase::kMain;
+		}
+		break;
+	case Phase::kMain:
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+		{
+			
+
+			SEHandle = Audio::GetInstance()->PlayWave(SEDataHandle, true);
+
+			Audio::GetInstance()->StopWave(soundDataHandle);
+			
+
+			fade_->Start(Fade::Status::FadeOut, 10.0f);
+			phase_ = Phase::kFadeOut;
+
+		}
+		break;
+	case Phase::kFadeOut:
+		fade_->Update();
+		if (fade_->isFinished()) {
+			isFinish = true;
+			
+		}
+		break;
+	}
+	fade_->SetPosition({ cameraPosition.x,cameraPosition.y ,cameraPosition.z });
 	
+
 	coin_.SetPosition(yenPosition_);
 	coin_.SetRotation(yenRotation_);
 	coin_.Update();
@@ -143,6 +173,8 @@ void TitleScene::Update()
 	cameraPosition.y -= cameraSpeed;
 
 	yenPosition_.y = cameraPosition.y +4.5f;
+	
+	fade_->Update();
 
 	if (cameraPosition.y <= -38.0f)
 	{
@@ -181,13 +213,26 @@ void TitleScene::Draw()
 
 	haikeiModel_->Draw(haikeiTransform, camera_);
 
-	coin_.Draw();
+	if (phase_ != Phase::kFadeOut)
+	{
+		coin_.Draw();
+	}
+	else
+	{
+		fade_->Draw();
+	}
+
+	
 
 	Sprite::PreDraw();
-	if (isView)
+	if (phase_ != Phase::kFadeOut)
 	{
-		spriteUI_->Draw();
+		if (isView)
+		{
+			spriteUI_->Draw();
+		}
+		spriteTitleNameUI_->Draw();
+
 	}
-	spriteTitleNameUI_->Draw();
 	Sprite::PostDraw();
 }

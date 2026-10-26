@@ -15,7 +15,7 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-	
+
 	//カメラ
 	camera_.Initialize();
 	camera_.rotation_ = { 0.0f,0.0f,0.0f };
@@ -50,7 +50,7 @@ void GameScene::Initialize()
 
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
-	coin_.Initialize(yenModel_,&camera_, { -3.0f,16.0f,0.0f });
+	coin_.Initialize(yenModel_, &camera_, { -3.0f,16.0f,0.0f });
 	yenPosition_ = { -3.0f,16.0f,0.0f };
 	yenRotation_ = { 0.0f,0.0f,0.0f };
 
@@ -68,8 +68,19 @@ void GameScene::Initialize()
 	haikeiTransform.scale_ = { 0.6f,1.5f,1.0f };
 	haikeiTransform.rotation_ = { 0.0f,3.14f,0.0f };
 
+	//スタート演出
+	startBlackTexture = TextureManager::Load("startBlack/startBlack3.png");
+	spriteStart3_ = Sprite::Create(startBlackTexture, { 640,360 }, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
+	startBlackTexture = TextureManager::Load("startBlack/startBlack2.png");
+	spriteStart2_ = Sprite::Create(startBlackTexture, { 640,360 }, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
+	startBlackTexture = TextureManager::Load("startBlack/startBlack1.png");
+	spriteStart1_ = Sprite::Create(startBlackTexture, { 640,360 }, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
+	startBlackTexture = TextureManager::Load("startBlack/startBlackGO.png");
+	spriteStartGO_ = Sprite::Create(startBlackTexture, { 640,360 }, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
 
-	
+	startTimer = 3.0f;
+
+
 
 	camera_.UpdateMatrix();
 	camera_.TransferMatrix();
@@ -92,6 +103,7 @@ void GameScene::Update()
 
 	MoveCoin();
 
+	
 	coin_.Update();
 	coin_.SetPosition(yenPosition_);
 	coin_.SetRotation(yenRotation_);
@@ -115,12 +127,12 @@ void GameScene::Update()
 
 	if (hitWall_)
 	{
-		
+
 		shot_ = false;
 		if (isHit)
 		{
 			gravity_ = 0.0f;
-			
+
 		}
 		if (isHit2)
 		{
@@ -150,12 +162,12 @@ void GameScene::Update()
 		shot_ = false;
 	}
 
-	if (!isHit2 && !isHit && !isHit3 && !isHit4 && !isHit5)
+	if (!isHit && !isHit2 && !isHit3 && !isHit4 && !isHit5)
 	{
 		hitPosition_.y = yenPosition_.y;
-		yenPosition_.y -= gravity_;//重力
+		yenPosition_.y -= gravity_;//重力落下
 	}
-		camera_.translation_.y = yenPosition_.y;
+	camera_.translation_.y = yenPosition_.y;
 
 	if (yenPosition_.y < -49.0f)
 	{
@@ -179,6 +191,36 @@ void GameScene::Update()
 
 }
 
+void GameScene::Start()
+{
+	startTimer -= 1.0f / 60.0f;
+	if (startTimer <= 3.0f && startTimer > 2.0f)
+	{
+		spriteStart3_->Draw();
+	}
+	if (startTimer <= 2.0f && startTimer > 1.0f)
+	{
+		spriteStart2_->Draw();
+	}
+	if (startTimer <= 1.0f && startTimer > 0.0f)
+	{
+		spriteStart1_->Draw();
+	}
+	if (startTimer <= 0.0f && startTimer > -0.5f)
+	{
+		spriteStartGO_->Draw();
+	}
+
+	if (startTimer > 0.0f)
+	{
+		gravity_ = 0.0f;
+	}
+	else
+	{
+		gravity_ = 0.1f;
+	}
+}
+
 void GameScene::MoveCoin()
 {
 	if (Input::GetInstance()->PushKey(DIK_A)) {
@@ -192,7 +234,7 @@ void GameScene::MoveCoin()
 	}
 	else if (Input::GetInstance()->PushKey(DIK_D)) {
 
-		
+
 		hitPower_ += 0.01f;
 		if (hitPower_ >= 1.0f)
 		{
@@ -250,7 +292,7 @@ void GameScene::MoveCoin()
 			yenPosition_.y += 1.0f;
 		}
 
-		
+
 
 		gravity_ = 0.1f;
 	}
@@ -266,7 +308,7 @@ void GameScene::AllCollision()
 	yenWorld.translation_ = yenPosition_;
 	yenWorld.rotation_ = { 0.0f,0.0f,0.0f };
 	yenWorld.scale_ = { 1.0f,1.0f,1.0f };
-	isHit =  hitBox_.IsCollisionStage(yenWorld, stageTransform);
+	isHit = hitBox_.IsCollisionStage(yenWorld, stageTransform);
 	isHit2 = hitBox_.IsCollisionStage(yenWorld, stageTransform2);
 	isHit3 = hitBox_.IsCollisionStage(yenWorld, stageTransform3);
 	isHit4 = hitBox_.IsCollisionStage(yenWorld, stageTransform4);
@@ -380,5 +422,12 @@ void GameScene::Draw()
 	stageModel_->Draw(stageTransform5, camera_);
 	coin_.Draw();
 	goalModel_->Draw(goalTransform, camera_);
-	haikeiModel_->Draw(haikeiTransform,camera_);
+	haikeiModel_->Draw(haikeiTransform, camera_);
+
+	Sprite::PreDraw();
+
+	Start();
+
+
+	Sprite::PostDraw();
 }

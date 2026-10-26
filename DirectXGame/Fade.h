@@ -1,4 +1,5 @@
 #pragma once
+#include "Coin.h"
 
 #include "KamataEngine.h"
 
@@ -18,7 +19,7 @@ public:
 
 
 	
-	void Initialize();
+	void Initialize(Model* model, Camera* camera);
 
 	void Update();
 
@@ -32,9 +33,21 @@ public:
 
 	~Fade();
 
+	void SetPosition(KamataEngine::Vector3 position);
+
 private:
-	uint32_t textureHandle_ = 0;
-	KamataEngine::Sprite* sprite_ = nullptr;
+
+	KamataEngine::Camera* camera_;
+
+	KamataEngine::Vector3 cameraPosition;
+	float cameraSpeed;
+
+	//10円
+	KamataEngine::WorldTransform worldTransform_;
+	KamataEngine::Model* model_ = nullptr;
+
+	float addScale_;
+	float addRotate_;
 
 
 	Status status_ = Status::None;

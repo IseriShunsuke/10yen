@@ -1,10 +1,17 @@
 #pragma once
 #include "KamataEngine.h"
 #include "Coin.h"
+#include "Fade.h"
 
 class TitleScene
 {
 public:
+	enum class Phase {
+		kFadeIn,
+		kMain,
+		kFadeOut,
+	};
+
 	~TitleScene();
 
 	void Initialize();
@@ -15,6 +22,10 @@ public:
 
 	bool GetFinish() { return isFinish; }
 private:
+
+	Fade* fade_ = nullptr;
+
+	Phase phase_ = Phase::kFadeIn;
 
 	//ステージ
 	KamataEngine::WorldTransform stageTransform;
