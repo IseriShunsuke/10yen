@@ -17,8 +17,12 @@ public:
 
 	void MoveCoin();
 
+	void Start();
+
 	bool GetClear() { return isClear_; };
 	bool GetOver() { return isOver_; };
+
+	
 
 private:
 	//ステージ
@@ -41,6 +45,14 @@ private:
 	//背景
 	KamataEngine::WorldTransform haikeiTransform;
 	KamataEngine::Model* haikeiModel_;
+
+	//スタート演出
+	uint32_t startBlackTexture;
+	KamataEngine::Sprite* spriteStart3_;
+	KamataEngine::Sprite* spriteStart2_;
+	KamataEngine::Sprite* spriteStart1_;
+	KamataEngine::Sprite* spriteStartGO_;
+	float startTimer;
 
 	KamataEngine::Camera camera_;
 	//当たり判定

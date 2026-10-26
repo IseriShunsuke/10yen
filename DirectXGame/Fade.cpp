@@ -3,13 +3,22 @@
 
 using namespace KamataEngine;
 
-void Fade::Initialize() 
-{ 
-	textureHandle_ = TextureManager::Load("white1x1.png");
-	sprite_ = Sprite::Create(textureHandle_, {0, 0});
-	sprite_->SetSize(Vector2(1280, 720));
-	sprite_->SetColor(Vector4(0, 0, 0, 1));
-	
+void Fade::Initialize(Model* model, Camera* camera)
+{
+
+	//10円
+	model_ = model;
+
+	camera_ = camera;
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = { 1.0f,10.0f,-10.0f };
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
+
+	cameraSpeed = 0.1f;
+
+	addRotate_ = 0.1f;
+	addScale_ = 0.049f;
 }
 
 void Fade::Update()
@@ -21,8 +30,6 @@ void Fade::Update()
 		if (counter_ >= duration_) {
 			counter_ = duration_;
 		}
-		
-		sprite_->SetColor(Vector4(0, 0, 0, 1.0f - std::clamp(counter_ / duration_, 0.0f, 1.0f)));
 		break;
 	case Fade::Status::FadeOut:
 		counter_ += 1.0f / 60.0f;
@@ -31,9 +38,29 @@ void Fade::Update()
 			counter_ = duration_;
 		}
 
-		sprite_->SetColor(Vector4(0, 0, 0, std::clamp(counter_ / duration_,0.0f,1.0f )));
+		
+
+		if (counter_ > duration_ / 2)
+		{
+			worldTransform_.scale_.x -= addScale_;
+			worldTransform_.scale_.y -= addScale_;
+		}
+		else
+		{
+			worldTransform_.scale_.x += addScale_;
+			worldTransform_.scale_.y += addScale_;
+		}
+
+		
+		if (worldTransform_.rotation_.y <= 6.0f)
+		{
+			worldTransform_.rotation_.y += addRotate_;
+		}
+		
 		break;
 	}
+
+	worldTransform_.UpdateMatrix();
 }
 
 void Fade::Draw()
@@ -42,24 +69,26 @@ void Fade::Draw()
 	{
 		return;
 	}
-	
 
-	sprite_->Draw();
 
-	
+	model_->Draw(worldTransform_, *camera_);
+
+
 }
 
-void Fade::Start(Status status, float duration) { 
-	status_ = status; 
+void Fade::Start(Status status, float duration) {
+	status_ = status;
 	duration_ = duration;
 	counter_ = 0.0f;
 }
 
-void Fade::Stop() 
-{ status_ = Status::None; }
+void Fade::Stop()
+{
+	status_ = Status::None;
+}
 
 bool Fade::isFinished() const
-{ 
+{
 	switch (status_) {
 	case Fade::Status::FadeIn:
 	case Fade::Status::FadeOut:
@@ -77,4 +106,10 @@ bool Fade::isFinished() const
 Fade::~Fade()
 {
 
+}
+
+void Fade::SetPosition(KamataEngine::Vector3 position)
+{
+	worldTransform_.translation_.x = position.x;
+	worldTransform_.translation_.y = position.y;
 }
