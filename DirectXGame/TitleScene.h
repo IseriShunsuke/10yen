@@ -72,7 +72,6 @@ private:
 	uint32_t soundDataHandle;
 	uint32_t voiceHandle;
 
-	uint32_t SEDataHandle;
-	uint32_t SEHandle;
+	
 };
 

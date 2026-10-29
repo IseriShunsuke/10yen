@@ -51,7 +51,7 @@ void GameScene::Initialize()
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
 	coin_.Initialize(yenModel_, &camera_, { -3.0f,16.0f,0.0f });
-	yenPosition_ = { -3.0f,16.0f,0.0f };
+	yenPosition_ = { 0.0f,0.0f,0.0f };
 	yenRotation_ = { 0.0f,0.0f,0.0f };
 
 	//ゴール
@@ -78,6 +78,11 @@ void GameScene::Initialize()
 	startBlackTexture = TextureManager::Load("startBlack/startBlackGO.png");
 	spriteStartGO_ = Sprite::Create(startBlackTexture, { 640,360 }, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
 
+	//ゲームオーバー演出用	
+	directiontexture = TextureManager::Load("death.png");
+	spriteDirection_ = Sprite::Create(directiontexture, {640,360}, { 1, 1, 1, 1 }, { 0.5f, 0.5f });
+	directionTimer = 0;
+
 	startTimer = 3.0f;
 
 
@@ -86,12 +91,8 @@ void GameScene::Initialize()
 	camera_.TransferMatrix();
 
 	isHit = true;
+	
 
-	hitPosition_ = { 0.0f,0.0f,0.0f };
-	gravity_ = 0.1f;
-
-	shot_ = false;
-	hitWall_ = false;
 
 	isClear_ = false;
 	isOver_ = false;
@@ -101,82 +102,45 @@ void GameScene::Update()
 {
 	AllCollision();
 
-	MoveCoin();
-
 	
+	coin_.PowerAndGravity(isHit,isHit2,isHit3,isHit4,isHit5);
+
 	coin_.Update();
-	coin_.SetPosition(yenPosition_);
-	coin_.SetRotation(yenRotation_);
+	yenPosition_ =  coin_.GetPosition();
+	yenRotation_ =  coin_.GetRotation();
 
-
-	if (yenPosition_.x <= -20.0f)
+	if (isHit || isHit2 || isHit3 || isHit4 || isHit5)
 	{
-		hitWall_ = true;
-		yenPosition_.x = -20.0f;
-	}
-
-	else if (yenPosition_.x > 10.0f)
-	{
-		hitWall_ = true;
-		yenPosition_.x = 10.0f;
+		coin_.SetHitStage(true);
 	}
 	else
 	{
-		hitWall_ = false;
+		coin_.SetHitStage(false);
 	}
 
-	if (hitWall_)
-	{
-
-		shot_ = false;
-		if (isHit)
-		{
-			gravity_ = 0.0f;
-
-		}
-		if (isHit2)
-		{
-			hitPower_ = 0.0f;
-		}
-		if (isHit3)
-		{
-			gravity_ = 0.0f;
-
-		}
-		if (isHit4)
-		{
-			hitPower_ = 0.0f;
-		}
-		if (isHit5)
-		{
-			gravity_ = 0.0f;
-			hitPower_ = 0.0f;
-
-		}
-
-
-	}
-
-	if (hitPower_ == 0)
-	{
-		shot_ = false;
-	}
+	coin_.MoveCoin();
+	
 
 	if (!isHit && !isHit2 && !isHit3 && !isHit4 && !isHit5)
 	{
-		hitPosition_.y = yenPosition_.y;
-		yenPosition_.y -= gravity_;//重力落下
+		
+		coin_.GravityFall();
 	}
 	camera_.translation_.y = yenPosition_.y;
 
 	if (yenPosition_.y < -49.0f)
 	{
-		isOver_ = true;
+		directionTimer += 1.0f / 60.0f;
+		if (directionTimer >= 2.0f)
+		{
+			isOver_ = true;
+		}
+		
 	}
 
-	if (camera_.translation_.y <= -50.0f)
+	if (camera_.translation_.y <= -37.0f)
 	{
-		camera_.translation_.y = -50.0f;
+		camera_.translation_.y = -37.0f;
 	}
 
 	stageTransform.UpdateMatrix();
@@ -213,93 +177,15 @@ void GameScene::Start()
 
 	if (startTimer > 0.0f)
 	{
-		gravity_ = 0.0f;
+		coin_.SetGravity(0.0f);
 	}
 	else
 	{
-		gravity_ = 0.1f;
+		coin_.SetGravity(0.1f);
 	}
 }
 
-void GameScene::MoveCoin()
-{
-	if (Input::GetInstance()->PushKey(DIK_A)) {
 
-		hitPower_ -= 0.01f;
-		if (hitPower_ <= -1.0f)
-		{
-			hitPower_ = -1.0f;
-		}
-
-	}
-	else if (Input::GetInstance()->PushKey(DIK_D)) {
-
-
-		hitPower_ += 0.01f;
-		if (hitPower_ >= 1.0f)
-		{
-			hitPower_ = 1.0f;
-		}
-
-	}
-	else
-	{
-		shotPower_ = hitPower_;
-		if (shotPower_ != 0.0f)
-		{
-			shot_ = true;
-
-		}
-		else
-		{
-			hitPower_ = 0.0f;
-		}
-
-	}
-
-	if (shot_)
-	{
-
-		yenPosition_.x += shotPower_ * 1.0f;
-		if (shotPower_ > 0.0f)
-		{
-			shotPower_ -= 0.1f;
-			if (shotPower_ <= 0)
-			{
-				hitPower_ = 0.0f;
-				shot_ = false;
-			}
-		}
-		if (shotPower_ < 0.0f)
-		{
-			shotPower_ += 0.1f;
-			if (shotPower_ >= 0)
-			{
-				hitPower_ = 0.0f;
-				shot_ = false;
-			}
-		}
-
-		if (shotPower_ == 0)
-		{
-			hitPower_ = 0.0f;
-			shot_ = false;
-		}
-
-
-		if (isHit || isHit2 || isHit3 || isHit4 || isHit5)
-		{
-			yenPosition_.y += 1.0f;
-		}
-
-
-
-		gravity_ = 0.1f;
-	}
-
-
-
-}
 
 void GameScene::AllCollision()
 {
@@ -319,91 +205,24 @@ void GameScene::AllCollision()
 
 	if (isHit)
 	{
-		float angle = stageTransform.rotation_.z;
-		float speed = 0.1f;
-
-		// ステージの接線方向
-		Vector2 dir = {
-			std::cos(angle),
-			std::sin(angle)
-		};
-
-		yenPosition_.x -= dir.x * speed;
-		if (!hitWall_)
-		{
-			yenPosition_.y -= dir.y * speed;
-		}
+		coin_.HitStage(stageTransform.rotation_.z);
 	}
 	else if (isHit2)
 	{
-		float angle = stageTransform2.rotation_.z;
-		float speed = 0.1f;
-
-		// ステージの接線方向
-		Vector2 dir = {
-			std::cos(angle),
-			std::sin(angle)
-		};
-
-		yenPosition_.x -= dir.x * speed;
-		if (!hitWall_)
-		{
-			yenPosition_.y -= dir.y * speed;
-		}
-
+		coin_.HitStage(stageTransform2.rotation_.z);
 	}
 	else if (isHit3)
 	{
-		float angle = stageTransform3.rotation_.z;
-		float speed = 0.1f;
-
-		// ステージの接線方向
-		Vector2 dir = {
-			std::cos(angle),
-			std::sin(angle)
-		};
-
-		yenPosition_.x -= dir.x * speed;
-		if (!hitWall_)
-		{
-			yenPosition_.y -= dir.y * speed;
-		}
-
+		coin_.HitStage(stageTransform3.rotation_.z);
 	}
-	else if (isHit4)
+	else if (coin_.GetHitWall())
 	{
-		float angle = stageTransform4.rotation_.z;
-		float speed = 0.1f;
-
-		// ステージの接線方向
-		Vector2 dir = {
-			std::cos(angle),
-			std::sin(angle)
-		};
-
-		yenPosition_.x -= dir.x * speed;
-		if (!hitWall_)
-		{
-			yenPosition_.y -= dir.y * speed;
-		}
-
+		coin_.HitStage(stageTransform4.rotation_.z);
 	}
 	else if (isHit5)
 	{
-		float angle = stageTransform5.rotation_.z;
-		float speed = 0.1f;
 
-		// ステージの接線方向
-		Vector2 dir = {
-			std::cos(angle),
-			std::sin(angle)
-		};
-
-		yenPosition_.x -= dir.x * speed;
-		if (!hitWall_)
-		{
-			yenPosition_.y -= dir.y * speed;
-		}
+		coin_.HitStage(stageTransform5.rotation_.z);
 
 	}
 
@@ -427,6 +246,11 @@ void GameScene::Draw()
 	Sprite::PreDraw();
 
 	Start();
+
+	if (directionTimer < 2.0f && yenPosition_.y < -49.0f)
+	{
+		spriteDirection_->Draw();
+	}
 
 
 	Sprite::PostDraw();

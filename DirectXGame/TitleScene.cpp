@@ -76,7 +76,7 @@ void TitleScene::Initialize()
 
 	voiceHandle = Audio::GetInstance()->PlayWave(soundDataHandle, true);
 
-	SEDataHandle = Audio::GetInstance()->LoadWave("pushBotan.wav");
+	
 
 	
 
@@ -104,7 +104,9 @@ void TitleScene::Update()
 		if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 		{
 			
-
+			uint32_t SEDataHandle;
+			uint32_t SEHandle;
+			SEDataHandle = Audio::GetInstance()->LoadWave("pushBotan.wav");
 			SEHandle = Audio::GetInstance()->PlayWave(SEDataHandle, true);
 
 			Audio::GetInstance()->StopWave(soundDataHandle);

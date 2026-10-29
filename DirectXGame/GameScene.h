@@ -15,7 +15,7 @@ public:
 
 	void AllCollision();
 
-	void MoveCoin();
+	
 
 	void Start();
 
@@ -62,19 +62,17 @@ private:
 	bool isHit4;
 	bool isHit5;
 	HitBox hitBox_;
-
-	float hitPower_;
-	float shotPower_;
-	float gravity_;
-
-	bool shot_;
-	bool hitWall_;
+	
+	//ゲームオーバー演出用	
+	uint32_t directiontexture;
+	KamataEngine::Sprite* spriteDirection_;
+	float directionTimer;
 
 	bool hitGoal_;
 
 	bool isClear_;
 	bool isOver_;
 	
-	KamataEngine::Vector3 hitPosition_;
+	
 };
 
