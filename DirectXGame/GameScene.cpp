@@ -205,24 +205,24 @@ void GameScene::AllCollision()
 
 	if (isHit)
 	{
-		coin_.HitStage(stageTransform.rotation_.z);
-	}
-	else if (isHit2)
-	{
-		coin_.HitStage(stageTransform2.rotation_.z);
-	}
-	else if (isHit3)
-	{
-		coin_.HitStage(stageTransform3.rotation_.z);
-	}
-	else if (coin_.GetHitWall())
-	{
-		coin_.HitStage(stageTransform4.rotation_.z);
-	}
-	else if (isHit5)
-	{
-
-		coin_.HitStage(stageTransform5.rotation_.z);
+		coin_.HitStage(stageTransform.rotation_.z);			//									//
+	}														//									//
+	else if (isHit2)										//									//
+	{														//									//
+		coin_.HitStage(stageTransform2.rotation_.z);		//									//
+	}														//									//
+	else if (isHit3)										//									//
+	{														//				計算はcoin.cpp		//
+		coin_.HitStage(stageTransform3.rotation_.z);		//									//
+	}														//									//
+	else if (coin_.GetHitWall())							//									//
+	{														//									//
+		coin_.HitStage(stageTransform4.rotation_.z);		//									//
+	}														//									//
+	else if (isHit5)										//									//
+	{														//									//
+															//									//
+		coin_.HitStage(stageTransform5.rotation_.z);		//									//
 
 	}
 
