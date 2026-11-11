@@ -166,6 +166,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// nullptrの代入
 	delete titleScene;
 	delete gameScene;
+	delete gameClear;
+	delete gameOver;
 	// エンジン終了
 	KamataEngine::Finalize();
 	return 0;
