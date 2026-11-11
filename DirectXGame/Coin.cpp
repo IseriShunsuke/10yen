@@ -14,6 +14,10 @@ void Coin::Initialize(Model* model, Camera* camera, const Vector3& position)
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 
+	//ステージ
+
+	stageHitBox_;
+
 	camera_ = camera;
 
 	model_ = model;
@@ -23,6 +27,24 @@ void Coin::Initialize(Model* model, Camera* camera, const Vector3& position)
 
 void Coin::Update()
 {
+
+	if (isHit || isHit2 || isHit3 || isHit4 || isHit5)
+	{
+		hitStage_ = true;
+	}
+	else
+	{
+		hitStage_ = false;
+	}
+
+
+	if (!isHit && !isHit2 && !isHit3 && !isHit4 && !isHit5)
+	{
+
+		GravityFall();
+	}
+
+
 	if (worldTransform_.translation_.x <= -20.0f)
 	{
 		worldTransform_.translation_.x = -20.0f;
@@ -45,6 +67,7 @@ void Coin::Update()
 
 
 	worldTransform_.UpdateMatrix();
+	stageHitBox_.Update();
 }
 
 void Coin::MoveCoin()
@@ -149,29 +172,102 @@ void Coin::GravityFall()
 	worldTransform_.translation_.y -= gravity_;//重力落下
 }
 
-void Coin::PowerAndGravity(bool stage1, bool stage2, bool stage3, bool stage4, bool stage5)
+void Coin::Collision(Vector3 stageAngle)
+{
+
+
+	WorldTransform stageWorld;
+	stageWorld.Initialize();
+	stageWorld.translation_ = stageHitBox_.GetStageWorldPos1();
+	stageWorld.rotation_ = stageHitBox_.GetStageRotate1();
+	stageWorld.scale_ = { 1.0f,1.0f,1.0f };
+	stageWorld.UpdateMatrix();
+
+
+	isHit = hitBox_.IsCollisionStage(worldTransform_, stageWorld);
+
+	stageWorld.translation_ = stageHitBox_.GetStageWorldPos2();
+	stageWorld.rotation_ = stageHitBox_.GetStageRotate2();
+	stageWorld.scale_ = { 1.0f,1.0f,1.0f };
+	stageWorld.UpdateMatrix();
+
+	isHit2 = hitBox_.IsCollisionStage(worldTransform_, stageWorld);
+
+	stageWorld.translation_ = stageHitBox_.GetStageWorldPos3();
+	stageWorld.rotation_ = stageHitBox_.GetStageRotate3();
+	stageWorld.scale_ = { 1.0f,1.0f,1.0f };
+	stageWorld.UpdateMatrix();
+
+	isHit3 = hitBox_.IsCollisionStage(worldTransform_, stageWorld);
+
+	stageWorld.translation_ = stageHitBox_.GetStageWorldPos4();
+	stageWorld.rotation_ = stageHitBox_.GetStageRotate4();
+	stageWorld.scale_ = { 1.0f,1.0f,1.0f };
+	stageWorld.UpdateMatrix();
+
+	isHit4 = hitBox_.IsCollisionStage(worldTransform_, stageWorld);
+
+	stageWorld.translation_ = stageHitBox_.GetStageWorldPos5();
+	stageWorld.rotation_ = stageHitBox_.GetStageRotate5();
+	stageWorld.scale_ = { 1.0f,1.0f,1.0f };
+	stageWorld.UpdateMatrix();
+
+	isHit5 = hitBox_.IsCollisionStage(worldTransform_, stageWorld);
+
+
+	
+	if (isHit)
+	{
+		stageAngle = stageHitBox_.GetStageWorldPos1();
+		HitStage(stageAngle.z);								//									//
+	}														//									//
+	else if (isHit2)										//									//
+	{														//									//
+		stageAngle = stageHitBox_.GetStageWorldPos2();		//									//
+		HitStage(stageAngle.z);								//									//
+	}														//									//
+	else if (isHit3)										//									//
+	{														//				計算はcoin.cpp		//
+		stageAngle = stageHitBox_.GetStageWorldPos3();		//					HitStageで		//
+		HitStage(stageAngle.z);								//									//
+	}														//									//
+	else if (hitWall_)										//									//
+	{														//									//
+		stageAngle = stageHitBox_.GetStageWorldPos4();		//									//
+		HitStage(stageAngle.z);								//									//
+	}														//									//
+	else if (isHit5)										//									//
+	{														//									//
+															//									//
+		stageAngle = stageHitBox_.GetStageWorldPos5();		//									//
+		HitStage(stageAngle.z);								//									//
+
+	}
+}
+
+void Coin::PowerAndGravity()
 {
 	if (hitWall_)
 	{
-		if (stage1)
+		if (isHit)
 		{
 			gravity_ = 0.0f;
 
 		}
-		if (stage2)
+		if (isHit2)
 		{
 			shotPower_ = 0.0f;
 		}
-		if (stage3)
+		if (isHit3)
 		{
 			gravity_ = 0.0f;
 
 		}
-		if (stage4)
+		if (isHit4)
 		{
 			shotPower_ = 0.0f;
 		}
-		if (stage5)
+		if (isHit5)
 		{
 			gravity_ = 0.0f;
 			shotPower_ = 0.0f;

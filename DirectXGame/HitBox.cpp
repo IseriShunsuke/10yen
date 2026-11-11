@@ -2,7 +2,7 @@
 #include <cmath>
 
 using namespace KamataEngine;
-bool HitBox::IsCollisionStage(WorldTransform& coin, WorldTransform& stage)
+bool HitBox::IsCollisionStage(const WorldTransform& coin,const  WorldTransform& stage)
 {
 	float angle = -stage.rotation_.z;   // 逆回転
 

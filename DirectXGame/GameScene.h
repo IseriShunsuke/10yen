@@ -2,6 +2,7 @@
 #include "KamataEngine.h"
 #include "Coin.h"
 #include"HitBox.h"
+#include "Stage.h"
 class GameScene
 {
 public:
@@ -26,12 +27,7 @@ public:
 
 private:
 	//ステージ
-	
-	KamataEngine::WorldTransform stageTransform;
-	KamataEngine::WorldTransform stageTransform2;
-	KamataEngine::WorldTransform stageTransform3;
-	KamataEngine::WorldTransform stageTransform4;
-	KamataEngine::WorldTransform stageTransform5;
+	Stage stage_;
 	KamataEngine::Model* stageModel_;
 	//10円
 	Coin coin_;
@@ -55,12 +51,7 @@ private:
 	float startTimer;
 
 	KamataEngine::Camera camera_;
-	//当たり判定
-	bool isHit;
-	bool isHit2;
-	bool isHit3;
-	bool isHit4;
-	bool isHit5;
+	
 	HitBox hitBox_;
 	
 	//ゲームオーバー演出用	

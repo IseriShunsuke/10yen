@@ -128,8 +128,7 @@ void TitleScene::Update()
 	fade_->SetPosition({ cameraPosition.x,cameraPosition.y ,cameraPosition.z });
 	
 
-	coin_.SetPosition(yenPosition_);
-	coin_.SetRotation(yenRotation_);
+	
 	coin_.Update();
 	
 	viewTimer += 1.0f / 60.0f;

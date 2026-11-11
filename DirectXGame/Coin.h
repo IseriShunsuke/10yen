@@ -1,5 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
+#include "Stage.h"
+#include "HitBox.h"
 
 class Coin
 {
@@ -20,19 +22,16 @@ public:
 
 	void HitStage(float angle);
 
-	void PowerAndGravity(bool stage1, bool stage2, bool stage3, bool stage4, bool stage5);
+	void PowerAndGravity();
 
-	KamataEngine::Vector3 SetPosition(KamataEngine::Vector3 position) { return worldTransform_.translation_ = position; }
-	KamataEngine::Vector3 SetRotation(KamataEngine::Vector3 rotation) { return worldTransform_.rotation_ = rotation; }
+	void Collision(Vector3 stageAngle);
+
 
 	KamataEngine::Vector3 GetPosition() { return worldTransform_.translation_; }
 	KamataEngine::Vector3 GetRotation() { return worldTransform_.rotation_; }
 
 	float  SetGravity(float gravity) { return gravity_ = gravity; }
 	float  SetPower(float power) { return shotPower_ = power; }
-
-	bool GetHitWall() { return hitWall_; }
-	bool SetHitStage(bool hitStage) { return hitStage_ = hitStage; }
 
 	
 	
@@ -42,9 +41,19 @@ private:
 													//
 	KamataEngine::Camera* camera_ = nullptr;		//
 
+	Stage stageHitBox_;
+
 	float gravity_;
 	float hitPower_;
 	float shotPower_;
+
+	//当たり判定
+	bool isHit;
+	bool isHit2;
+	bool isHit3;
+	bool isHit4;
+	bool isHit5;
+	HitBox hitBox_;
 
 
 	bool shot_;

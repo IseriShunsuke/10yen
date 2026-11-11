@@ -23,30 +23,8 @@ void GameScene::Initialize()
 
 	//ステージ
 	stageModel_ = Model::CreateFromOBJ("stage_kari");
-	stageTransform.Initialize();
-	stageTransform.translation_ = { -12.0f,5.0f,9.0f };
-	stageTransform.scale_ = { 1.0f,1.0f,1.0f };
-	stageTransform.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
-
-	stageTransform2.Initialize();
-	stageTransform2.translation_ = { 6.0f,-7.0f,9.0f };
-	stageTransform2.scale_ = { 1.0f,1.0f,1.0f };
-	stageTransform2.rotation_ = { 0.0f,0.0f,0.5f };//0.0 右斜め上　//2.0~左斜め上
-
-	stageTransform3.Initialize();
-	stageTransform3.translation_ = { -12.0f,-20.0f,9.0f };
-	stageTransform3.scale_ = { 1.0f,1.0f,1.0f };
-	stageTransform3.rotation_ = { 0.0f,0.0f,0.1f };//0.0 右斜め上　//2.0~左斜め上
-
-	stageTransform4.Initialize();
-	stageTransform4.translation_ = { 6.0f,-30.0f,9.0f };
-	stageTransform4.scale_ = { 1.0f,1.0f,1.0f };
-	stageTransform4.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
-
-	stageTransform5.Initialize();
-	stageTransform5.translation_ = { -18.0f,-44.0f,9.0f };
-	stageTransform5.scale_ = { 1.0f,1.0f,1.0f };
-	stageTransform5.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
+	
+	stage_.Initialize(stageModel_, &camera_);
 
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
@@ -89,8 +67,6 @@ void GameScene::Initialize()
 
 	camera_.UpdateMatrix();
 	camera_.TransferMatrix();
-
-	isHit = true;
 	
 
 
@@ -102,30 +78,16 @@ void GameScene::Update()
 {
 	AllCollision();
 
-	
-	coin_.PowerAndGravity(isHit,isHit2,isHit3,isHit4,isHit5);
-
 	coin_.Update();
+	stage_.Update();
 	yenPosition_ =  coin_.GetPosition();
 	yenRotation_ =  coin_.GetRotation();
 
-	if (isHit || isHit2 || isHit3 || isHit4 || isHit5)
-	{
-		coin_.SetHitStage(true);
-	}
-	else
-	{
-		coin_.SetHitStage(false);
-	}
+	
 
 	coin_.MoveCoin();
 	
 
-	if (!isHit && !isHit2 && !isHit3 && !isHit4 && !isHit5)
-	{
-		
-		coin_.GravityFall();
-	}
 	camera_.translation_.y = yenPosition_.y;
 
 	if (yenPosition_.y < -49.0f)
@@ -143,11 +105,7 @@ void GameScene::Update()
 		camera_.translation_.y = -37.0f;
 	}
 
-	stageTransform.UpdateMatrix();
-	stageTransform2.UpdateMatrix();
-	stageTransform3.UpdateMatrix();
-	stageTransform4.UpdateMatrix();
-	stageTransform5.UpdateMatrix();
+
 	goalTransform.UpdateMatrix();
 	haikeiTransform.UpdateMatrix();
 
@@ -194,37 +152,11 @@ void GameScene::AllCollision()
 	yenWorld.translation_ = yenPosition_;
 	yenWorld.rotation_ = { 0.0f,0.0f,0.0f };
 	yenWorld.scale_ = { 1.0f,1.0f,1.0f };
-	isHit = hitBox_.IsCollisionStage(yenWorld, stageTransform);
-	isHit2 = hitBox_.IsCollisionStage(yenWorld, stageTransform2);
-	isHit3 = hitBox_.IsCollisionStage(yenWorld, stageTransform3);
-	isHit4 = hitBox_.IsCollisionStage(yenWorld, stageTransform4);
-	isHit5 = hitBox_.IsCollisionStage(yenWorld, stageTransform5);
+	yenWorld.UpdateMatrix();
 
 	hitGoal_ = hitBox_.IsCollisionGoal(yenWorld, goalTransform);
 
-
-	if (isHit)
-	{
-		coin_.HitStage(stageTransform.rotation_.z);			//									//
-	}														//									//
-	else if (isHit2)										//									//
-	{														//									//
-		coin_.HitStage(stageTransform2.rotation_.z);		//									//
-	}														//									//
-	else if (isHit3)										//									//
-	{														//				計算はcoin.cpp		//
-		coin_.HitStage(stageTransform3.rotation_.z);		//									//
-	}														//									//
-	else if (coin_.GetHitWall())							//									//
-	{														//									//
-		coin_.HitStage(stageTransform4.rotation_.z);		//									//
-	}														//									//
-	else if (isHit5)										//									//
-	{														//									//
-															//									//
-		coin_.HitStage(stageTransform5.rotation_.z);		//									//
-
-	}
+	
 
 	if (hitGoal_)
 	{
@@ -234,11 +166,7 @@ void GameScene::AllCollision()
 
 void GameScene::Draw()
 {
-	stageModel_->Draw(stageTransform, camera_);
-	stageModel_->Draw(stageTransform2, camera_);
-	stageModel_->Draw(stageTransform3, camera_);
-	stageModel_->Draw(stageTransform4, camera_);
-	stageModel_->Draw(stageTransform5, camera_);
+	stage_.Draw();
 	coin_.Draw();
 	goalModel_->Draw(goalTransform, camera_);
 	haikeiModel_->Draw(haikeiTransform, camera_);

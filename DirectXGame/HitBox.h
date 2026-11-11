@@ -7,7 +7,7 @@
 class HitBox
 {
 public:
-	bool IsCollisionStage(KamataEngine::WorldTransform& coin, KamataEngine::WorldTransform& stage);
+	bool IsCollisionStage(const KamataEngine::WorldTransform& coin,const KamataEngine::WorldTransform& stage);
 	bool IsCollisionGoal(const KamataEngine::WorldTransform& coin, const KamataEngine::WorldTransform& goal);
 
 	
