@@ -24,7 +24,7 @@ public:
 
 	void PowerAndGravity();
 
-	void Collision(Vector3 stageAngle);
+	void Collision(KamataEngine::WorldTransform* stage1, KamataEngine::WorldTransform* stage2, KamataEngine::WorldTransform* stage3, KamataEngine::WorldTransform* stage4, KamataEngine::WorldTransform* stage5);
 
 
 	KamataEngine::Vector3 GetPosition() { return worldTransform_.translation_; }
@@ -41,11 +41,9 @@ private:
 													//
 	KamataEngine::Camera* camera_ = nullptr;		//
 
-	Stage stageHitBox_;
-
-	float gravity_;
-	float hitPower_;
-	float shotPower_;
+	float gravity_ = 0.0f;
+	float hitPower_ = 0.0f;
+	float shotPower_ = 0.0f;
 
 	//当たり判定
 	bool isHit;

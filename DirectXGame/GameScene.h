@@ -57,7 +57,7 @@ private:
 	//ゲームオーバー演出用	
 	uint32_t directiontexture;
 	KamataEngine::Sprite* spriteDirection_;
-	float directionTimer;
+	float directionTimer = 0.0f;
 
 	bool hitGoal_;
 

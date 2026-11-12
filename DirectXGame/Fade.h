@@ -46,8 +46,8 @@ private:
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Model* model_ = nullptr;
 
-	float addScale_;
-	float addRotate_;
+	float addScale_ = 0.0f;
+	float addRotate_ = 0.0f;
 
 
 	Status status_ = Status::None;
