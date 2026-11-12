@@ -18,6 +18,6 @@ private:
 
 	uint32_t textureHandle_ = 0;
 
-	bool isFinish;
+	bool isFinish = false;
 };
 

@@ -156,6 +156,8 @@ void GameScene::AllCollision()
 
 	hitGoal_ = hitBox_.IsCollisionGoal(yenWorld, goalTransform);
 
+	coin_.Collision(stage_.GetWorld1(), stage_.GetWorld2(), stage_.GetWorld3(), stage_.GetWorld4(), stage_.GetWorld5());
+
 	
 
 	if (hitGoal_)

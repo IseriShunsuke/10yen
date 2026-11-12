@@ -48,7 +48,7 @@ private:
 	KamataEngine::Camera camera_;
 	
 	KamataEngine::Vector3 cameraPosition;
-	float cameraSpeed;
+	float cameraSpeed = 0.0f;
 
 	KamataEngine::Sprite* spriteUI_ = nullptr;
 
@@ -62,12 +62,12 @@ private:
 
 	bool isFinish;
 
-	float viewTimer;
-	bool isView;
+	float viewTimer = 0.0f;;
+	bool isView = false;
 
-	bool isRolling;
-	float waitTimer;
-	int roop;
+	bool isRolling = false;
+	float waitTimer = 0.0f;
+	int roop = false;
 
 	uint32_t soundDataHandle;
 	uint32_t voiceHandle;
