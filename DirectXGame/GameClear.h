@@ -14,9 +14,18 @@ public:
 
 	bool GetFinish() { return isFinish; }
 private:
-	KamataEngine::Sprite* spriteTitle_ = nullptr;
 
-	uint32_t textureHandle_ = 0;
+	KamataEngine::Model* model_;
+	KamataEngine::WorldTransform worldTransform_;
+
+	KamataEngine::Model* modelHaikei_;
+	KamataEngine::WorldTransform haikeiWorldTransform_;
+
+	KamataEngine::Sprite* spriteUI_ = nullptr;
+
+	uint32_t UItexture_;
+
+	KamataEngine::Camera camera_;
 
 	bool isFinish = false; 
 };

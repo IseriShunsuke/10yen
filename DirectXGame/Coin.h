@@ -33,6 +33,9 @@ public:
 	float  SetGravity(float gravity) { return gravity_ = gravity; }
 	float  SetPower(float power) { return shotPower_ = power; }
 
+	bool SetClear(bool clear) { return isClear = clear; }
+	bool GetFinish() { return isFinish; }
+
 	
 	
 private:
@@ -57,5 +60,9 @@ private:
 	bool shot_;
 	bool hitWall_;
 	bool hitStage_;
+
+
+	bool isClear;
+	bool isFinish;
 };
 

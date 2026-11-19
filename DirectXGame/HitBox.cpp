@@ -4,12 +4,13 @@
 using namespace KamataEngine;
 bool HitBox::IsCollisionStage(const WorldTransform& coin,const  WorldTransform& stage)
 {
-	float angle = -stage.rotation_.z;   // 逆回転
+	float angle = -stage.rotation_.z;   // 逆回転(傾きの打消し)
 
+	//コインとステージの距離計算
 	float dx = coin.translation_.x - stage.translation_.x;
 	float dy = coin.translation_.y - stage.translation_.y;
 
-	// ステージ座標系へ変換
+	// ステージ座標系へ変換(ステージを中心で見た時)
 	float localX = dx * cosf(angle) - dy * sinf(angle);
 	float localY = dx * sinf(angle) + dy * cosf(angle);
 	
