@@ -27,6 +27,9 @@ void Coin::Initialize(Model* model, Camera* camera, const Vector3& position)
 	isHit3 = false;
 	isHit4 = false;
 	isHit5 = false;
+
+	isFinish = false;
+	isClear = false;
 }
 
 void Coin::Update()
@@ -44,8 +47,10 @@ void Coin::Update()
 
 	if (!isHit && !isHit2 && !isHit3 && !isHit4 && !isHit5)
 	{
-
-		GravityFall();
+		if (!isClear)
+		{
+				GravityFall();
+		}
 	}
 
 
@@ -75,81 +80,97 @@ void Coin::Update()
 
 void Coin::MoveCoin()
 {
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if (!isClear)
+	{
 
-		hitPower_ -= 0.01f;
-		if (hitPower_ <= -1.0f)
+		if (Input::GetInstance()->PushKey(DIK_A)) {
+
+			hitPower_ -= 0.01f;
+			if (hitPower_ <= -1.0f)
+			{
+				hitPower_ = -1.0f;
+			}
+
+		}
+		else if (Input::GetInstance()->PushKey(DIK_D)) {
+
+
+			hitPower_ += 0.01f;
+			if (hitPower_ >= 1.0f)
+			{
+				hitPower_ = 1.0f;
+			}
+
+		}
+		else
 		{
-			hitPower_ = -1.0f;
+			shotPower_ = hitPower_;
+			if (shotPower_ != 0.0f)
+			{
+				shot_ = true;
+
+			}
+			else
+			{
+				hitPower_ = 0.0f;
+			}
+
 		}
 
-	}
-	else if (Input::GetInstance()->PushKey(DIK_D)) {
-
-
-		hitPower_ += 0.01f;
-		if (hitPower_ >= 1.0f)
+		if (shot_)
 		{
-			hitPower_ = 1.0f;
+
+			worldTransform_.translation_.x += shotPower_ * 1.0f;
+			if (shotPower_ > 0.0f)
+			{
+				shotPower_ -= 0.1f;
+				if (shotPower_ <= 0)
+				{
+					hitPower_ = 0.0f;
+					shot_ = false;
+				}
+			}
+			if (shotPower_ < 0.0f)
+			{
+				shotPower_ += 0.1f;
+				if (shotPower_ >= 0)
+				{
+					hitPower_ = 0.0f;
+					shot_ = false;
+				}
+			}
+
+			if (shotPower_ == 0)
+			{
+				hitPower_ = 0.0f;
+				shot_ = false;
+			}
+
+
+			if (hitStage_)
+			{
+				worldTransform_.translation_.y += 1.0f;
+			}
+
+
+
+			gravity_ = 0.1f;
 		}
 
 	}
 	else
 	{
-		shotPower_ = hitPower_;
-		if (shotPower_ != 0.0f)
-		{
-			shot_ = true;
+		worldTransform_.translation_.x = 6.0f;
+		worldTransform_.translation_.y = -44.0f;
 
-		}
-		else
-		{
-			hitPower_ = 0.0f;
-		}
+		worldTransform_.translation_.z += 0.01f;
+		worldTransform_.rotation_.y += 0.1f;
 
+		if (worldTransform_.translation_.z > 2.0f)
+		{
+			isFinish = true;
+		}
 	}
-
-	if (shot_)
-	{
-
-		worldTransform_.translation_.x += shotPower_ * 1.0f;
-		if (shotPower_ > 0.0f)
-		{
-			shotPower_ -= 0.1f;
-			if (shotPower_ <= 0)
-			{
-				hitPower_ = 0.0f;
-				shot_ = false;
-			}
-		}
-		if (shotPower_ < 0.0f)
-		{
-			shotPower_ += 0.1f;
-			if (shotPower_ >= 0)
-			{
-				hitPower_ = 0.0f;
-				shot_ = false;
-			}
-		}
-
-		if (shotPower_ == 0)
-		{
-			hitPower_ = 0.0f;
-			shot_ = false;
-		}
-
-
-		if (hitStage_)
-		{
-			worldTransform_.translation_.y += 1.0f;
-		}
-
-
-
-		gravity_ = 0.1f;
-	}
-
-
 
 }
 

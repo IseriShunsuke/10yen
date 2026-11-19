@@ -5,12 +5,8 @@ using namespace KamataEngine;
 
 GameScene::~GameScene()
 {
-	delete stageModel_;
-	delete yenModel_;
 	delete goalModel_;
 	delete haikeiModel_;
-
-	goalModel_;
 }
 
 void GameScene::Initialize()
@@ -28,14 +24,14 @@ void GameScene::Initialize()
 
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
-	coin_.Initialize(yenModel_, &camera_, { -3.0f,16.0f,0.0f });
+	coin_.Initialize(yenModel_, &camera_, { 6.0f,-40.0f,0.0f });//スタートは x = -3.0f, y = 16.0f
 	yenPosition_ = { 0.0f,0.0f,0.0f };
 	yenRotation_ = { 0.0f,0.0f,0.0f };
 
 	//ゴール
 	goalModel_ = Model::CreateFromOBJ("cube");
 	goalTransform.Initialize();
-	goalTransform.translation_ = { 6.0f,-44.0f,0.0f };
+	goalTransform.translation_ = { 6.0f,-44.0f,1.4f };
 	goalTransform.scale_ = { 1.0f,1.0f,1.0f };
 	goalTransform.rotation_ = { 0.0f,0.0f,0.0f };
 
@@ -162,8 +158,15 @@ void GameScene::AllCollision()
 
 	if (hitGoal_)
 	{
+		coin_.SetClear(true);
+		
+	}
+
+	if (coin_.GetFinish())
+	{
 		isClear_ = true;
 	}
+	
 }
 
 void GameScene::Draw()
