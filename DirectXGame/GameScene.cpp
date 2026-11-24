@@ -99,26 +99,7 @@ void GameScene::Update()
 
 	coin_.MoveCoin();
 
-	// 確率で発生
-	if (rand() % 20 == 0) {
-		// 発生位置は乱数
-		Vector3 position = { distribution(randomEngine) * 30.0f + camera_.translation_.x, distribution(randomEngine) * 20.0f + camera_.translation_.y, 1.45f };
-		// パーティクルの生成
-		ParticleBorn(position);
-	}
-	// パーティクルの更新
-	for (Particle* particle : particles_) {
-		particle->Update();
-	}
-
-	// 終了フラグの立ったパーティクルを削除
-	particles_.remove_if([](Particle* particle) {
-		if (particle->IsFinished() == true) {
-			delete particle;
-			return true;
-		}
-		return false;
-		});
+	
 
 
 	camera_.translation_.y = yenPosition_.y;
