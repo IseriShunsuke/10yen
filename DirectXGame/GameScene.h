@@ -3,6 +3,9 @@
 #include "Coin.h"
 #include"HitBox.h"
 #include "Stage.h"
+#include "Particle.h"
+
+
 class GameScene
 {
 public:
@@ -29,6 +32,7 @@ private:
 	//ステージ
 	Stage stage_;
 	KamataEngine::Model* stageModel_;
+
 	//10円
 	Coin coin_;
 	KamataEngine::Model* yenModel_;
@@ -49,6 +53,14 @@ private:
 	KamataEngine::Sprite* spriteStart1_;
 	KamataEngine::Sprite* spriteStartGO_;
 	float startTimer;
+
+	// パーティクル
+	Particle* particle_ = nullptr;
+	std::list<Particle*> particles_;
+	KamataEngine::Model* modelParticle_ = nullptr;
+
+	void ParticleBorn(KamataEngine::Vector3 position);
+	KamataEngine::Vector3 normalize(KamataEngine::Vector3 v);
 
 	KamataEngine::Camera camera_;
 	
